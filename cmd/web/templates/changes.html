@@ -1,0 +1,56 @@
+{{ define "changes.tmpl" }}
+  <div class="flex-column w-50 h-100" style="overflow-y: auto">
+    <div id="jstree_demo_div"></div>
+  </div>
+  <div class="flex-column w-50 h-100" style="border: 1px solid #4e4e4e; overflow-y: auto;">
+    <div id="change_data" style="overflow-wrap:anywhere; white-space: break-spaces;"></div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      var treeData = {
+        "plugins": ["types"],
+        "types": {
+          "default": {
+            'icon': "fa-solid fa-circle-question"
+          },
+          "Module": {
+            "icon": "fa-solid fa-folder-closed"
+          },
+          "create": {
+            "icon": "fa-solid fa-circle-plus colour-green"
+          },
+          "delete": {
+            "icon": "fa-solid fa-circle-minus colour-red"
+          },
+          "update": {
+            "icon": "fa-solid fa-circle-up"
+          },
+          "delete/create": {
+            "icon": "fa-solid fa-circle-half-stroke"
+          },
+          "no-op": {
+            "icon": "fa-solid fa-circle-notch"
+          }
+        },
+        "core": {
+          "multiple" : false,
+          "data": {
+            "url": "/api/v1/change/"
+
+          }
+        }
+      };
+      $(function () { $('#jstree_demo_div').jstree(treeData); });
+
+      $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+        var i, j, r = [];
+        for(i = 0, j = data.selected.length; i < j; i++) {
+          r.push(data.instance.get_node(data.selected[i]));
+        }
+        $.get("/api/v1/change/" + r[0].id, function(jsonData, status) {
+          $("#change_data").text(JSON.stringify(jsonData, null, 2))
+        })
+      });
+    })
+  </script>
+{{ end }}

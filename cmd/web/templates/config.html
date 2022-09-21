@@ -1,0 +1,57 @@
+{{ define "config.tmpl" }}
+<div class="flex-column w-50 h-100" style="overflow-y: auto">
+  <div id="jstree_demo_div"></div>
+</div>
+<div class="flex-column w-50 h-100" style="border: 1px solid #4e4e4e; overflow-y: auto;">
+  <div id="config_data" style="overflow-wrap:anywhere; white-space: break-spaces;"></div>
+</div>
+<script>
+  $(document).ready(function() {
+    var treeData = {
+      "plugins": ["types"],
+      "types": {
+        "default": {
+          'icon': "fa-solid fa-circle-question"
+        },
+        "Folder": {
+          "icon": "fa-solid fa-folder-closed"
+        }
+        ,
+        "Provider": {
+          "icon": "fa-solid fa-right-to-bracket"
+        },
+        "Resource": {
+          "icon": "fa-solid fa-gear"
+        },
+        "Module": {
+          "icon": "fa-solid fa-folder-closed"
+        },
+        "Output": {
+          "icon": "fa-solid fa-file-export"
+        }
+      },
+      "core": {
+        "multiple" : false,
+        "data": {
+          "url": "/api/v1/config/",
+          "data": function(node) {
+            return {"id": node.id, "type": node.type };
+          }
+        }
+      }
+    };
+    $(function () { $('#jstree_demo_div').jstree(treeData); });
+
+    $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+      var i, j, r = [];
+      for(i = 0, j = data.selected.length; i < j; i++) {
+        r.push(data.instance.get_node(data.selected[i]));
+      }
+      console.log(r[0])
+      $.get("/api/v1/config/" + r[0].id, function(jsonData, status) {
+        $("#config_data").text(JSON.stringify(jsonData, null, 2))
+      })
+    });
+  })
+</script>
+{{ end }}

@@ -1,0 +1,51 @@
+{{ define "state.tmpl" }}
+  <div class="flex-column w-50 h-100" style="overflow-y: auto">
+    <div id="jstree_demo_div"></div>
+  </div>
+  <div class="flex-column w-50 h-100" style="border: 1px solid #4e4e4e; overflow-y: auto;">
+    <div id="state_data" style="overflow-wrap:anywhere; white-space: break-spaces;"></div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      function sort(a, b) {
+        console.log("call sort" + a)
+        if (a.type == b.type) { return 0; }
+        if (a.type == "Module") { return 1; }
+        return -1;
+      }
+
+      var treeData = {
+        "plugins": ["types"],
+        "types": {
+          "default": {
+            'icon': "fa-solid fa-folder"
+          },
+          "Module": {
+            "icon": "fa-solid fa-folder-closed"
+          },
+          "Resource": {
+            "icon": "fa-solid fa-code"
+          }
+        },
+        "core": {
+          "multiple" : false,
+          "data": {
+            "url": "/api/v1/state/"
+
+          }
+        }
+      };
+      $(function () { $('#jstree_demo_div').jstree(treeData); });
+
+      $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+        var i, j, r = [];
+        for(i = 0, j = data.selected.length; i < j; i++) {
+          r.push(data.instance.get_node(data.selected[i]));
+        }
+        $.get("/api/v1/state/" + r[0].id, function(jsonData, status) {
+          $("#state_data").text(JSON.stringify(jsonData, null, 2))
+        })
+      });
+    })
+  </script>
+{{ end }}

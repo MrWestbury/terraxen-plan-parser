@@ -1,0 +1,18 @@
+{{ define "sidebar.tmpl"}}
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px">
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <a href="state" class="nav-link text-white {{ if .IsState }}active{{ end }}" aria-current="page">State</a>
+    </li>
+    <li>
+      <a href="changes" class="nav-link text-white {{ if .IsChanges }}active{{ end }}">Changes</a>
+    </li>
+    <li>
+      <a href="config" class="nav-link text-white {{ if .IsConfig }}active{{ end }}">Config</a>
+    </li>
+  </ul>
+  <hr>
+  
+</div>
+{{ end }}
